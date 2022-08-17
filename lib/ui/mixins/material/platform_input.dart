@@ -28,20 +28,23 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
         ));
   }
 
-  // @override
-  // Widget constructInputDropdown<T extends ValueItemSelectFieldBloc<String, String, dynamic>>(BuildContext context, T value, String text, String hint, {bool readOnly = true}) {
-  //   return ValueItemDropdownFieldBlocBuilder<String, String>(
-  //     selectFieldBloc: value,
-  //     decoration: InputDecoration(
-  //       // filled: true,
-  //       hintText: hint,
-  //       labelText: text,
-  //     ),
-  //     itemBuilder: (context, value) => FieldItem(
-  //       child: Text(value),
-  //     ),
-  //   );
-  // }
+  @override
+  Widget constructInputDropdown(BuildContext context, String name, String text, String hint, Map<String, String> values, {bool readOnly = true, EdgeInsetsGeometry? padding}) {
+    return Padding(
+        padding: padding ?? const EdgeInsets.all(8.0),
+        child: ReactiveDropdownField<String>(
+          formControlName: name,
+          decoration: InputDecoration(
+            hintText: hint,
+            labelText: text,
+          ),
+          items: List<DropdownMenuItem<String>>.from(
+            values.entries.map((entry) {
+              return DropdownMenuItem<String>(value: entry.key, child: Text(entry.value));
+            }),
+          ),
+        ));
+  }
 
   @override
   Widget constructInputImage(BuildContext context, String name, String title, String? hint, {bool readOnly = false}) {
