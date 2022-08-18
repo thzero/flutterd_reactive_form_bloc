@@ -7,6 +7,7 @@ import 'package:reactive_image_picker/reactive_image_picker.dart';
 
 import 'package:flutterd/ui/mixins/material/platform.dart';
 import 'package:flutterd/ui/mixins/platform.dart';
+import 'package:flutterd_reactive_form_bloc/blocs/form/reactive_form_state.dart';
 import 'package:flutterd_reactive_form_bloc/ui/mixins/platform_input.dart';
 
 mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlatformMixin {
@@ -47,6 +48,22 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
   }
 
   @override
+  Widget constructInputForm(BuildContext context, ReactiveFormState state, Widget child, ReactiveFormConsumerActionsBuilder builder) {
+    return state.formGroup != null
+        ? ReactiveForm(
+            formGroup: state.formGroup!,
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Expanded(
+                child: SingleChildScrollView(child: child),
+              ),
+              ReactiveFormConsumer(builder: (context, form, child) {
+                return Row(mainAxisAlignment: MainAxisAlignment.end, children: builder(context, state));
+              }),
+            ]))
+        : Container();
+  }
+
+  @override
   Widget constructInputImage(BuildContext context, String name, String title, String? hint, {bool readOnly = false}) {
     return ReactiveImagePicker(
         formControlName: name,
@@ -76,7 +93,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
           formControlName: name,
           keyboardType: TextInputType.numberWithOptions(signed: signed, decimal: false),
           readOnly: readOnly,
-          showErrors: (control) => control.invalid && control.dirty,
+          // showErrors: (control) => control.invalid || control.dirty,
         ));
   }
 
@@ -92,7 +109,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
           formControlName: name,
           keyboardType: TextInputType.numberWithOptions(signed: signed, decimal: true),
           readOnly: readOnly,
-          showErrors: (control) => control.invalid && control.dirty,
+          // showErrors: (control) => control.invalid || control.dirty,
         ));
   }
 
@@ -107,7 +124,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
           ),
           formControlName: name,
           readOnly: readOnly,
-          showErrors: (control) => control.invalid && control.dirty,
+          // showErrors: (control) => control.invalid || control.dirty,
         ));
   }
 
@@ -128,7 +145,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
           maxLengthEnforcement: maxLengthEnforcement,
           maxLength: maxLength,
           readOnly: readOnly,
-          showErrors: (control) => control.invalid && control.dirty,
+          // showErrors: (control) => control.invalid || control.dirty,
         ));
   }
 }
