@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:easy_mask/easy_mask.dart';
+
 import 'package:reactive_color_picker/reactive_color_picker.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:reactive_image_picker/reactive_image_picker.dart';
@@ -48,14 +50,42 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
   }
 
   @override
-  Widget constructInputForm(BuildContext context, ReactiveFormState state, Widget child, ReactiveFormConsumerActionsBuilder builder) {
+  Widget constructInputDate(
+    BuildContext context,
+    String name,
+    String text,
+    String hint, {
+    bool readOnly = true,
+    EdgeInsetsGeometry? padding,
+    DateTime? firstDate,
+    DateTime? lastDate,
+  }) {
+    firstDate ??= DateTime.now();
+    lastDate ??= DateTime(2099, 1, 1, 0, 0);
+    return ReactiveDatePicker(
+      formControlName: name,
+      builder: (context, picker, child) {
+        return IconButton(
+          onPressed: picker.showPicker,
+          icon: const Icon(Icons.date_range),
+        );
+      },
+      firstDate: firstDate,
+      lastDate: lastDate,
+    );
+  }
+
+  @override
+  Widget constructInputForm(BuildContext context, ReactiveFormState state, Widget child, ReactiveFormConsumerActionsBuilder builder, {bool scrollable = true}) {
     return state.formGroup != null
         ? ReactiveForm(
             formGroup: state.formGroup!,
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Expanded(
-                child: SingleChildScrollView(child: child),
-              ),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              scrollable
+                  ? Expanded(
+                      child: SingleChildScrollView(child: child),
+                    )
+                  : child,
               ReactiveFormConsumer(builder: (context, form, child) {
                 return Row(mainAxisAlignment: MainAxisAlignment.end, children: builder(context, state));
               }),
@@ -114,7 +144,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
   }
 
   @override
-  Widget constructInputText(BuildContext context, String name, String title, String? hint, {bool readOnly = false, EdgeInsetsGeometry? padding}) {
+  Widget constructInputText(BuildContext context, String name, String title, String? hint, {bool readOnly = false, EdgeInsetsGeometry? padding, List<String>? masks}) {
     return Padding(
         padding: padding ?? const EdgeInsets.all(8.0),
         child: ReactiveTextField(
@@ -124,8 +154,28 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
           ),
           formControlName: name,
           readOnly: readOnly,
+          inputFormatters: masks != null && masks.isNotEmpty ? _iinputFormattersFromMasks(masks) : null,
           // showErrors: (control) => control.invalid || control.dirty,
         ));
+  }
+
+  List<TextInputFormatter>? _iinputFormattersFromMasks(List<String>? masks) {
+    if (masks == null) {
+      return null;
+    }
+
+    List<TextInputFormatter> list = [];
+    for (var item in masks) {
+      list.add(TextInputMask(mask: item));
+    }
+    // List<TextInputFormatter> list = [];
+    // for (var item in masks) {
+    //   list.add(MaskTextInputFormatter(
+    //     mask: item,
+    //     type: MaskAutoCompletionType.lazy,
+    //   ));
+    // }
+    return list;
   }
 
   @override
