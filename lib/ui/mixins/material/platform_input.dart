@@ -144,17 +144,20 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
   }
 
   @override
-  Widget constructInputText(BuildContext context, String name, String title, String? hint, {bool readOnly = false, EdgeInsetsGeometry? padding, List<String>? masks}) {
+  Widget constructInputText(BuildContext context, String name, String title, String? hint, {bool readOnly = false, EdgeInsetsGeometry? padding, List<String>? masks, Widget? prefixIcon, Widget? suffixIcon, GestureTapCallback? onTap}) {
     return Padding(
         padding: padding ?? const EdgeInsets.all(8.0),
         child: ReactiveTextField(
           decoration: InputDecoration(
             hintText: hint,
             labelText: title,
+            prefixIcon: prefixIcon,
+            suffixIcon: suffixIcon,
           ),
           formControlName: name,
           readOnly: readOnly,
           inputFormatters: masks != null && masks.isNotEmpty ? _iinputFormattersFromMasks(masks) : null,
+          onTap: onTap,
           // showErrors: (control) => control.invalid || control.dirty,
         ));
   }
