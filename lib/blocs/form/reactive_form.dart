@@ -65,4 +65,13 @@ abstract class ReactiveFormBloc<X, U extends Repository> extends Cubit<ReactiveF
   Future<void> saveUpdateState(X? object) async {
     emit(ReactiveFormState(state.formGroup, object));
   }
+
+  updateValue(String name, dynamic value) {
+    var control = state.formGroup!.control(name);
+    var value2 = control.value;
+    control.updateValue(value);
+    if (control.value != value2) {
+      control.markAsDirty();
+    }
+  }
 }
