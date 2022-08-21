@@ -29,7 +29,7 @@ abstract class ReactiveFormBloc<X, U extends Repository> extends Cubit<ReactiveF
 
   Future<void> loading();
 
-  submit() async {
+  save() async {
     if (!state.formGroup!.dirty) {
       return;
     }
@@ -38,16 +38,40 @@ abstract class ReactiveFormBloc<X, U extends Repository> extends Cubit<ReactiveF
     }
 
     try {
-      if (await submitSave(state.object)) {
-        await submitUpdate(state.object);
+      if (await saveUpdate(state.object)) {
+        await saveUpdateState(state.object);
       }
+    } catch (ex) {
+      Logger().e('ReactiveFormBloc', 'save', ex);
+    }
+  }
+
+  submit() async {
+    try {
+      await submitUpdate(state.object);
     } catch (ex) {
       Logger().e('ReactiveFormBloc', 'submit', ex);
     }
   }
 
-  Future<bool> submitSave(X? object);
-  Future<void> submitUpdate(X? object) async {
+  Future<bool> saveUpdate(X? object) async {
+    return true;
+  }
+
+  Future<bool> submitUpdate(X? object) async {
+    return true;
+  }
+
+  Future<void> saveUpdateState(X? object) async {
     emit(ReactiveFormState(state.formGroup, object));
+  }
+
+  updateValue(String name, dynamic value) {
+    var control = state.formGroup!.control(name);
+    var value2 = control.value;
+    control.updateValue(value);
+    if (control.value != value2) {
+      control.markAsDirty();
+    }
   }
 }
