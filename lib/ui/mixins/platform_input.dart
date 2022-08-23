@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import 'package:flutterd_reactive_form_bloc/blocs/form/reactive_form_state.dart';
@@ -20,6 +21,7 @@ mixin InputPlatformMixin {
     DateTime? firstDate,
     DateTime? lastDate,
   });
+  Widget constructInputDateText(BuildContext context, String name, String title, String? hint, {bool readOnly = true, EdgeInsetsGeometry? padding, GestureTapCallback? onTap, DateFormat? dateTimeFormat});
   Widget constructInputDropdown(BuildContext context, String name, String text, String hint, Map<String, String> values, {bool readOnly = true, EdgeInsetsGeometry? padding});
   Widget constructInputForm(BuildContext context, ReactiveFormState state, Widget child, ReactiveFormConsumerActionsBuilder builder, {bool scrollable = true});
   Widget constructInputImage(BuildContext context, String name, String title, String? hint, {bool readOnly = false});

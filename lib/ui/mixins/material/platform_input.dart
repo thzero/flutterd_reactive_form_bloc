@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:intl/intl.dart';
 import 'package:easy_mask/easy_mask.dart';
 
 import 'package:reactive_color_picker/reactive_color_picker.dart';
@@ -73,6 +74,22 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
       firstDate: firstDate,
       lastDate: lastDate,
     );
+  }
+
+  Widget constructInputDateText(BuildContext context, String name, String title, String? hint, {bool readOnly = true, EdgeInsetsGeometry? padding, GestureTapCallback? onTap, DateFormat? dateTimeFormat}) {
+    return Padding(
+        padding: padding ?? const EdgeInsets.all(8.0),
+        child: ReactiveTextField(
+          decoration: InputDecoration(
+            hintText: hint,
+            labelText: title,
+          ),
+          valueAccessor: dateTimeFormat != null ? DateTimeValueAccessor(dateTimeFormat: dateTimeFormat) : null,
+          formControlName: name,
+          readOnly: readOnly,
+          onTap: onTap,
+          // showErrors: (control) => control.invalid || control.dirty,
+        ));
   }
 
   @override
