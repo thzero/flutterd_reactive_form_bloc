@@ -76,6 +76,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
     );
   }
 
+  @override
   Widget constructInputDateText(BuildContext context, String name, String title, String? hint, {bool readOnly = true, EdgeInsetsGeometry? padding, GestureTapCallback? onTap, DateFormat? dateTimeFormat}) {
     return Padding(
         padding: padding ?? const EdgeInsets.all(8.0),
