@@ -33,7 +33,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
   }
 
   @override
-  Widget constructInputDropdown(BuildContext context, String name, String text, String hint, Map<String, String> values, {bool readOnly = true, EdgeInsetsGeometry? padding}) {
+  Widget constructInputDropdown(BuildContext context, String name, String text, String hint, Map<String, String> values, {bool readOnly = true, EdgeInsetsGeometry? padding, Widget? suffixIcon}) {
     return Padding(
         padding: padding ?? const EdgeInsets.all(8.0),
         child: ReactiveDropdownField<String>(
@@ -41,6 +41,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
           decoration: InputDecoration(
             hintText: hint,
             labelText: text,
+            suffixIcon: suffixIcon,
           ),
           items: List<DropdownMenuItem<String>>.from(
             values.entries.map((entry) {
