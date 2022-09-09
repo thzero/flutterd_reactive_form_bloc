@@ -16,11 +16,12 @@ import 'package:flutterd_reactive_form_bloc/ui/mixins/platform_input.dart';
 mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlatformMixin {
   @override
   Widget constructInputCheckbox(BuildContext context, String name, String title, {bool readOnly = false, EdgeInsetsGeometry? padding}) {
-    return Padding(
-        padding: padding ?? const EdgeInsets.all(8.0),
-        child: ReactiveCheckbox(
-          formControlName: name,
-        ));
+    return Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+      ReactiveCheckbox(
+        formControlName: name,
+      ),
+      Expanded(child: Text(title)),
+    ]);
   }
 
   @override
@@ -181,25 +182,6 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
         ));
   }
 
-  List<TextInputFormatter>? _iinputFormattersFromMasks(List<String>? masks) {
-    if (masks == null) {
-      return null;
-    }
-
-    List<TextInputFormatter> list = [];
-    for (var item in masks) {
-      list.add(TextInputMask(mask: item));
-    }
-    // List<TextInputFormatter> list = [];
-    // for (var item in masks) {
-    //   list.add(MaskTextInputFormatter(
-    //     mask: item,
-    //     type: MaskAutoCompletionType.lazy,
-    //   ));
-    // }
-    return list;
-  }
-
   @override
   Widget constructInputTextArea(BuildContext context, String name, String title, String? hint,
       {int maxLines = 5, int minLines = 1, int? maxLength = 500, MaxLengthEnforcement maxLengthEnforcement = MaxLengthEnforcement.enforced, bool readOnly = false, EdgeInsetsGeometry? padding}) {
@@ -219,5 +201,24 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
           readOnly: readOnly,
           // showErrors: (control) => control.invalid || control.dirty,
         ));
+  }
+
+  List<TextInputFormatter>? _iinputFormattersFromMasks(List<String>? masks) {
+    if (masks == null) {
+      return null;
+    }
+
+    List<TextInputFormatter> list = [];
+    for (var item in masks) {
+      list.add(TextInputMask(mask: item));
+    }
+    // List<TextInputFormatter> list = [];
+    // for (var item in masks) {
+    //   list.add(MaskTextInputFormatter(
+    //     mask: item,
+    //     type: MaskAutoCompletionType.lazy,
+    //   ));
+    // }
+    return list;
   }
 }
