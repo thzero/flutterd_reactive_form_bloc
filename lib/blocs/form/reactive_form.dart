@@ -8,18 +8,26 @@ import 'package:flutterd_logging_wrapper/logging.dart';
 
 import 'package:flutterd_reactive_form_bloc/blocs/form/reactive_form_state.dart';
 
-abstract class ReactiveFormBloc<X, U extends Repository> extends Cubit<ReactiveFormState<X>> {
+abstract class RepositoryReactiveFormBloc<X, U extends Repository> extends ReactiveFormBloc<X> {
+  final U repository;
+  RepositoryReactiveFormBloc(BuildContext context, String? identifier, this.repository) : super(context, identifier);
+}
+
+abstract class ReactiveFormBloc<X> extends Cubit<ReactiveFormState<X>> {
   final BuildContext context;
   final String? identifier;
-  final U repository;
-  ReactiveFormBloc(this.context, this.identifier, this.repository) : super(ReactiveFormState<X>(null, null)) {
+  final Map<String, AbstractControl<dynamic>> _controls = {};
+
+  ReactiveFormBloc(this.context, this.identifier) : super(ReactiveFormState<X>(null, null)) {
     init();
   }
 
-  FormGroup initForm();
-
   init() {
-    FormGroup form = initForm();
+    _controls.clear();
+
+    initFormControls(_controls);
+    FormGroup form = initForm(_controls);
+    initFormGroupSupplemental(form, _controls);
     emit(ReactiveFormState(form, state.object));
 
     Future.delayed(const Duration(milliseconds: 50), () {
@@ -27,7 +35,21 @@ abstract class ReactiveFormBloc<X, U extends Repository> extends Cubit<ReactiveF
     });
   }
 
+  FormGroup initForm(Map<String, AbstractControl<dynamic>> controls) {
+    return FormGroup(controls);
+  }
+
+  initFormControls(Map<String, AbstractControl<dynamic>> controls);
+
+  initFormGroupSupplemental(FormGroup form, Map<String, AbstractControl<dynamic>> controls) {}
+
   Future<void> loading();
+
+  reset() async {
+    for (String key in _controls.keys) {
+      updateValue(key, null);
+    }
+  }
 
   save() async {
     if (!state.formGroup!.dirty) {
