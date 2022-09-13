@@ -6,7 +6,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 import 'package:flutterd_reactive_form_bloc/blocs/form/reactive_form_state.dart';
 
-typedef ReactiveFormConsumerActionsBuilder = List<Widget> Function(BuildContext context, ReactiveFormState state);
+typedef ReactiveFormConsumerActionsBuilder = List<Widget> Function(BuildContext context, ReactiveFormGroupState state);
 
 mixin InputPlatformMixin {
   Widget constructInputCheckbox(BuildContext context, String name, String title, {bool readOnly = false, EdgeInsetsGeometry? padding});
@@ -23,7 +23,7 @@ mixin InputPlatformMixin {
   });
   Widget constructInputDateText(BuildContext context, String name, String title, String? hint, {bool readOnly = true, EdgeInsetsGeometry? padding, ReactiveFormFieldCallback? onTap, DateFormat? dateTimeFormat});
   Widget constructInputDropdown(BuildContext context, String name, String text, String hint, Map<String, String> values, {bool readOnly = true, EdgeInsetsGeometry? padding, Widget? suffixIcon});
-  Widget constructInputForm(BuildContext context, ReactiveFormState state, Widget child, ReactiveFormConsumerActionsBuilder builder, {bool scrollable = true});
+  Widget constructInputForm(BuildContext context, ReactiveFormGroupState state, Widget child, ReactiveFormConsumerActionsBuilder builder, {bool scrollable = true});
   Widget constructInputImage(BuildContext context, String name, String title, String? hint, {bool readOnly = false});
   Widget constructInputNumber(BuildContext context, String name, String title, String? hint, {bool signed = false, bool readOnly = false, EdgeInsetsGeometry? padding});
   Widget constructInputNumberDecimal(BuildContext context, String name, String title, String? hint, {bool signed = false, bool readOnly = false, EdgeInsetsGeometry? padding});

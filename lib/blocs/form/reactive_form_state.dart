@@ -1,7 +1,19 @@
+import 'package:equatable/equatable.dart';
+
 import 'package:reactive_forms/reactive_forms.dart';
 
-class ReactiveFormState<X> {
-  final FormGroup? formGroup;
+class ReactiveFormGroupWithObjectState<X> extends ReactiveFormGroupState {
   final X? object;
-  ReactiveFormState(this.formGroup, this.object);
+  const ReactiveFormGroupWithObjectState(super.formGroup, this.object);
+
+  @override
+  List<Object?> get props => [formGroup, object];
+}
+
+class ReactiveFormGroupState extends Equatable {
+  final FormGroup? formGroup;
+  const ReactiveFormGroupState(this.formGroup);
+
+  @override
+  List<Object?> get props => [formGroup];
 }

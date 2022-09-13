@@ -12,36 +12,48 @@ import 'package:flutterd_logging_wrapper/logging.dart';
 
 import 'package:flutterd_reactive_form_bloc/blocs/form/reactive_form_state.dart';
 
-abstract class RepositoryReactiveFormBloc<Y extends ReactiveFormEvent, X, U extends Repository> extends ReactiveFormBloc<Y, X> {
+abstract class RepositoryReactiveFormBloc<X extends ReactiveFormGroupState, U extends Repository> extends ReactiveFormGroupBloc<X> {
   final U repository;
-  RepositoryReactiveFormBloc(BuildContext context, String? identifier, this.repository) : super(context, identifier);
+  RepositoryReactiveFormBloc(BuildContext context, String? identifier, this.repository, X state) : super(context, identifier, state);
 }
 
 abstract class ReactiveFormEvent extends Equatable {}
 
-class FormUpdateReactiveFormEvent extends ReactiveFormEvent {
+class FormUpdateReactiveFormGroupEvent extends ReactiveFormEvent {
   final FormGroup form;
-  FormUpdateReactiveFormEvent(this.form);
+  final bool initial;
+  FormUpdateReactiveFormGroupEvent(this.form, this.initial);
 
   @override
   List<Object> get props => [];
 }
 
-abstract class ReactiveFormBloc<Y extends ReactiveFormEvent, X> extends Bloc<Y, ReactiveFormState<X>> {
+abstract class ReactiveFormGroupBloc<X extends ReactiveFormGroupState> extends Bloc<ReactiveFormEvent, X> {
   final BuildContext context;
   final String? identifier;
   final Map<String, AbstractControl<dynamic>> _controls = {};
 
-  ReactiveFormBloc(this.context, this.identifier) : super(ReactiveFormState<X>(null, null)) {
+  ReactiveFormGroupBloc(this.context, this.identifier, X state) : super(state) {
+    on<FormUpdateReactiveFormGroupEvent>(_handleFormUpdate);
     init();
   }
 
-  FutureOr<void> handleFormUpdate(FormUpdateReactiveFormEvent event, Emitter<ReactiveFormState<X>> emit) async {
+  X initStateWithFormGroup(FormGroup formGroup);
+
+  FutureOr<void> _handleFormUpdate(FormUpdateReactiveFormGroupEvent event, Emitter<X> emit) async {
     try {
       // await m.acquire();
-      emit(ReactiveFormState(event.form, state.object));
+      emit(initStateWithFormGroup(event.form));
+      if (event.initial) {
+        // Future.delayed(const Duration(milliseconds: 50), () {
+        //   // loading();
+        //   add(FormLoadReactiveFormGroupEvent());
+        // });
+        await loading();
+        // add(FormLoadReactiveFormGroupEvent());
+      }
     } on Exception {
-      Logger().eM('ReactiveFormBloc', 'handleUpdate', 'Error');
+      Logger().eM('ReactiveFormBloc', '_handleFormUpdate', 'Error');
     }
     // finally {
     //   m.release();
@@ -49,16 +61,22 @@ abstract class ReactiveFormBloc<Y extends ReactiveFormEvent, X> extends Bloc<Y, 
   }
 
   init() {
-    _controls.clear();
+    try {
+      _controls.clear();
 
-    initFormControls(_controls);
-    FormGroup form = initForm(_controls);
-    initFormGroupSupplemental(form, _controls);
-    // emit(ReactiveFormState(form, state.object));
+      initFormControls(_controls);
+      FormGroup form = initForm(_controls);
+      initFormGroupSupplemental(form, _controls);
+      // emit(ReactiveFormState(form, state.object));
+      // add(FormUpdateReactiveFormEvent(form, true));
 
-    Future.delayed(const Duration(milliseconds: 50), () {
-      loading();
-    });
+      Future.delayed(const Duration(milliseconds: 50), () {
+        add(FormUpdateReactiveFormGroupEvent(form, true));
+        // loading();
+      });
+    } catch (ex) {
+      Logger().e(runtimeType.toString(), 'loading', ex);
+    }
   }
 
   FormGroup initForm(Map<String, AbstractControl<dynamic>> controls) {
@@ -72,46 +90,49 @@ abstract class ReactiveFormBloc<Y extends ReactiveFormEvent, X> extends Bloc<Y, 
   Future<void> loading();
 
   reset() async {
-    for (String key in _controls.keys) {
-      updateValue(key, null);
+    try {
+      for (String key in _controls.keys) {
+        updateValue(key, null);
+      }
+    } catch (ex) {
+      Logger().e(runtimeType.toString(), 'reset', ex);
     }
   }
 
   save() async {
-    if (!state.formGroup!.dirty) {
-      return;
-    }
-    if (state.object == null) {
+    if (state.formGroup == null || !state.formGroup!.dirty) {
       return;
     }
 
     try {
-      if (await saveUpdate(state.object)) {
-        await saveUpdateState(state.object);
+      if (await saveUpdate(state)) {
+        await saveUpdateState(state);
       }
     } catch (ex) {
-      Logger().e('ReactiveFormBloc', 'save', ex);
+      Logger().e(runtimeType.toString(), 'save', ex);
     }
   }
 
   submit() async {
     try {
-      await submitUpdate(state.object);
+      await submitUpdate(state);
     } catch (ex) {
-      Logger().e('ReactiveFormBloc', 'submit', ex);
+      Logger().e(runtimeType.toString(), 'submit', ex);
     }
   }
 
-  Future<bool> saveUpdate(X? object) async {
+  Future<bool> saveUpdate(X state) async {
     return true;
   }
 
-  Future<bool> submitUpdate(X? object) async {
-    return true;
+  Future<void> saveUpdateState(X state) async {
+    if (state.formGroup != null) {
+      add(FormUpdateReactiveFormGroupEvent(state.formGroup!, false));
+    }
   }
 
-  Future<void> saveUpdateState(X? object) async {
-    emit(ReactiveFormState(state.formGroup, object));
+  Future<bool> submitUpdate(X state) async {
+    return true;
   }
 
   updateValue(String name, dynamic value) {
@@ -124,17 +145,17 @@ abstract class ReactiveFormBloc<Y extends ReactiveFormEvent, X> extends Bloc<Y, 
   }
 }
 
-abstract class RepositoryReactiveFormCubit<X, U extends Repository> extends ReactiveFormCubit<X> {
+abstract class RepositoryReactiveFormGroupWithObjectCubit<X, U extends Repository> extends ReactiveFormGroupWithObjectCubit<X> {
   final U repository;
-  RepositoryReactiveFormCubit(BuildContext context, String? identifier, this.repository) : super(context, identifier);
+  RepositoryReactiveFormGroupWithObjectCubit(BuildContext context, String? identifier, this.repository) : super(context, identifier);
 }
 
-abstract class ReactiveFormCubit<X> extends Cubit<ReactiveFormState<X>> {
+abstract class ReactiveFormGroupWithObjectCubit<X> extends Cubit<ReactiveFormGroupWithObjectState<X>> {
   final BuildContext context;
   final String? identifier;
   final Map<String, AbstractControl<dynamic>> _controls = {};
 
-  ReactiveFormCubit(this.context, this.identifier) : super(ReactiveFormState<X>(null, null)) {
+  ReactiveFormGroupWithObjectCubit(this.context, this.identifier) : super(ReactiveFormGroupWithObjectState<X>(null, null)) {
     init();
   }
 
@@ -144,7 +165,7 @@ abstract class ReactiveFormCubit<X> extends Cubit<ReactiveFormState<X>> {
     initFormControls(_controls);
     FormGroup form = initForm(_controls);
     initFormGroupSupplemental(form, _controls);
-    emit(ReactiveFormState(form, state.object));
+    emit(ReactiveFormGroupWithObjectState(form, state.object));
 
     Future.delayed(const Duration(milliseconds: 50), () {
       loading();
@@ -162,8 +183,12 @@ abstract class ReactiveFormCubit<X> extends Cubit<ReactiveFormState<X>> {
   Future<void> loading();
 
   reset() async {
-    for (String key in _controls.keys) {
-      updateValue(key, null);
+    try {
+      for (String key in _controls.keys) {
+        updateValue(key, null);
+      }
+    } catch (ex) {
+      Logger().e(runtimeType.toString(), 'reset', ex);
     }
   }
 
@@ -180,7 +205,7 @@ abstract class ReactiveFormCubit<X> extends Cubit<ReactiveFormState<X>> {
         await saveUpdateState(state.object);
       }
     } catch (ex) {
-      Logger().e('ReactiveFormBloc', 'save', ex);
+      Logger().e(runtimeType.toString(), 'save', ex);
     }
   }
 
@@ -188,7 +213,7 @@ abstract class ReactiveFormCubit<X> extends Cubit<ReactiveFormState<X>> {
     try {
       await submitUpdate(state.object);
     } catch (ex) {
-      Logger().e('ReactiveFormBloc', 'submit', ex);
+      Logger().e(runtimeType.toString(), 'submit', ex);
     }
   }
 
@@ -196,12 +221,105 @@ abstract class ReactiveFormCubit<X> extends Cubit<ReactiveFormState<X>> {
     return true;
   }
 
+  Future<void> saveUpdateState(X? object) async {
+    emit(ReactiveFormGroupWithObjectState(state.formGroup, object));
+  }
+
   Future<bool> submitUpdate(X? object) async {
     return true;
   }
 
-  Future<void> saveUpdateState(X? object) async {
-    emit(ReactiveFormState(state.formGroup, object));
+  updateValue(String name, dynamic value) {
+    var control = state.formGroup!.control(name);
+    var value2 = control.value;
+    control.updateValue(value);
+    if (control.value != value2) {
+      control.markAsDirty();
+    }
+  }
+}
+
+abstract class RepositoryReactiveFormGroupCubit<U extends Repository> extends ReactiveFormGroupCubit {
+  final U repository;
+  RepositoryReactiveFormGroupCubit(BuildContext context, String? identifier, this.repository) : super(context, identifier);
+}
+
+abstract class ReactiveFormGroupCubit extends Cubit<ReactiveFormGroupState> {
+  final BuildContext context;
+  final String? identifier;
+  final Map<String, AbstractControl<dynamic>> _controls = {};
+
+  ReactiveFormGroupCubit(this.context, this.identifier) : super(const ReactiveFormGroupState(null)) {
+    init();
+  }
+
+  init() {
+    _controls.clear();
+
+    initFormControls(_controls);
+    FormGroup form = initForm(_controls);
+    initFormGroupSupplemental(form, _controls);
+    emit(ReactiveFormGroupState(form));
+
+    Future.delayed(const Duration(milliseconds: 50), () {
+      loading();
+    });
+  }
+
+  FormGroup initForm(Map<String, AbstractControl<dynamic>> controls) {
+    return FormGroup(controls);
+  }
+
+  initFormControls(Map<String, AbstractControl<dynamic>> controls);
+
+  initFormGroupSupplemental(FormGroup form, Map<String, AbstractControl<dynamic>> controls) {}
+
+  Future<void> loading();
+
+  reset() async {
+    try {
+      for (String key in _controls.keys) {
+        updateValue(key, null);
+      }
+    } catch (ex) {
+      Logger().e(runtimeType.toString(), 'reset', ex);
+    }
+  }
+
+  save() async {
+    if (!state.formGroup!.dirty) {
+      return;
+    }
+
+    try {
+      if (await saveUpdate(state)) {
+        await saveUpdateState(state);
+      }
+    } catch (ex) {
+      Logger().e(runtimeType.toString(), 'save', ex);
+    }
+  }
+
+  submit() async {
+    try {
+      await submitUpdate(state);
+    } catch (ex) {
+      Logger().e(runtimeType.toString(), 'submit', ex);
+    }
+  }
+
+  Future<bool> saveUpdate(ReactiveFormGroupState state) async {
+    return true;
+  }
+
+  Future<void> saveUpdateState(ReactiveFormGroupState state) async {
+    if (state.formGroup != null) {
+      emit(ReactiveFormGroupState(state.formGroup!));
+    }
+  }
+
+  Future<bool> submitUpdate(ReactiveFormGroupState state) async {
+    return true;
   }
 
   updateValue(String name, dynamic value) {

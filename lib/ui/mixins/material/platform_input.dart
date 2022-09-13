@@ -96,7 +96,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
   }
 
   @override
-  Widget constructInputForm(BuildContext context, ReactiveFormState state, Widget child, ReactiveFormConsumerActionsBuilder builder, {bool scrollable = true}) {
+  Widget constructInputForm(BuildContext context, ReactiveFormGroupState state, Widget child, ReactiveFormConsumerActionsBuilder builder, {bool scrollable = true}) {
     return state.formGroup != null
         ? ReactiveForm(
             formGroup: state.formGroup!,
