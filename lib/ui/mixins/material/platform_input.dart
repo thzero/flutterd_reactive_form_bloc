@@ -16,11 +16,12 @@ import 'package:flutterd_reactive_form_bloc/ui/mixins/platform_input.dart';
 mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlatformMixin {
   @override
   Widget constructInputCheckbox(BuildContext context, String name, String title, {bool readOnly = false, EdgeInsetsGeometry? padding}) {
-    return Padding(
-        padding: padding ?? const EdgeInsets.all(8.0),
-        child: ReactiveCheckbox(
-          formControlName: name,
-        ));
+    return Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+      ReactiveCheckbox(
+        formControlName: name,
+      ),
+      Expanded(child: Text(title)),
+    ]);
   }
 
   @override
@@ -78,7 +79,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
   }
 
   @override
-  Widget constructInputDateText(BuildContext context, String name, String title, String? hint, {bool readOnly = true, EdgeInsetsGeometry? padding, GestureTapCallback? onTap, DateFormat? dateTimeFormat}) {
+  Widget constructInputDateText(BuildContext context, String name, String title, String? hint, {bool readOnly = true, EdgeInsetsGeometry? padding, ReactiveFormFieldCallback? onTap, DateFormat? dateTimeFormat}) {
     return Padding(
         padding: padding ?? const EdgeInsets.all(8.0),
         child: ReactiveTextField(
@@ -95,7 +96,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
   }
 
   @override
-  Widget constructInputForm(BuildContext context, ReactiveFormState state, Widget child, ReactiveFormConsumerActionsBuilder builder, {bool scrollable = true}) {
+  Widget constructInputForm(BuildContext context, ReactiveFormGroupState state, Widget child, ReactiveFormConsumerActionsBuilder builder, {bool scrollable = true}) {
     return state.formGroup != null
         ? ReactiveForm(
             formGroup: state.formGroup!,
@@ -163,7 +164,8 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
   }
 
   @override
-  Widget constructInputText(BuildContext context, String name, String title, String? hint, {bool readOnly = false, EdgeInsetsGeometry? padding, List<String>? masks, Widget? prefixIcon, Widget? suffixIcon, GestureTapCallback? onTap}) {
+  Widget constructInputText(BuildContext context, String name, String title, String? hint,
+      {bool readOnly = false, EdgeInsetsGeometry? padding, List<String>? masks, Widget? prefixIcon, Widget? suffixIcon, ReactiveFormFieldCallback? onTap}) {
     return Padding(
         padding: padding ?? const EdgeInsets.all(8.0),
         child: ReactiveTextField(
@@ -179,25 +181,6 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
           onTap: onTap,
           // showErrors: (control) => control.invalid || control.dirty,
         ));
-  }
-
-  List<TextInputFormatter>? _iinputFormattersFromMasks(List<String>? masks) {
-    if (masks == null) {
-      return null;
-    }
-
-    List<TextInputFormatter> list = [];
-    for (var item in masks) {
-      list.add(TextInputMask(mask: item));
-    }
-    // List<TextInputFormatter> list = [];
-    // for (var item in masks) {
-    //   list.add(MaskTextInputFormatter(
-    //     mask: item,
-    //     type: MaskAutoCompletionType.lazy,
-    //   ));
-    // }
-    return list;
   }
 
   @override
@@ -219,5 +202,24 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
           readOnly: readOnly,
           // showErrors: (control) => control.invalid || control.dirty,
         ));
+  }
+
+  List<TextInputFormatter>? _iinputFormattersFromMasks(List<String>? masks) {
+    if (masks == null) {
+      return null;
+    }
+
+    List<TextInputFormatter> list = [];
+    for (var item in masks) {
+      list.add(TextInputMask(mask: item));
+    }
+    // List<TextInputFormatter> list = [];
+    // for (var item in masks) {
+    //   list.add(MaskTextInputFormatter(
+    //     mask: item,
+    //     type: MaskAutoCompletionType.lazy,
+    //   ));
+    // }
+    return list;
   }
 }
