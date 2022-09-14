@@ -45,12 +45,7 @@ abstract class ReactiveFormGroupBloc<X extends ReactiveFormGroupState> extends B
       // await m.acquire();
       emit(initStateWithFormGroup(event.form));
       if (event.initial) {
-        // Future.delayed(const Duration(milliseconds: 50), () {
-        //   // loading();
-        //   add(FormLoadReactiveFormGroupEvent());
-        // });
         await loading();
-        // add(FormLoadReactiveFormGroupEvent());
       }
     } on Exception {
       Logger().eM('ReactiveFormBloc', '_handleFormUpdate', 'Error');
@@ -107,17 +102,11 @@ abstract class ReactiveFormGroupBloc<X extends ReactiveFormGroupState> extends B
     try {
       if (await saveUpdate(state)) {
         await saveUpdateState(state);
+        state.formGroup!.markAsPristine();
+        state.formGroup!.markAsUntouched();
       }
     } catch (ex) {
       Logger().e(runtimeType.toString(), 'save', ex);
-    }
-  }
-
-  submit() async {
-    try {
-      await submitUpdate(state);
-    } catch (ex) {
-      Logger().e(runtimeType.toString(), 'submit', ex);
     }
   }
 
