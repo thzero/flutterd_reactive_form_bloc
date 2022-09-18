@@ -44,11 +44,13 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
             labelText: text,
             suffixIcon: suffixIcon,
           ),
-          items: List<DropdownMenuItem<String>>.from(
-            values.entries.map((entry) {
-              return DropdownMenuItem<String>(value: entry.key, child: Text(entry.value));
-            }),
-          ),
+          items: values != null
+              ? List<DropdownMenuItem<String>>.from(
+                  values.entries.map((entry) {
+                    return DropdownMenuItem<String>(value: entry.key, child: Text(entry.value));
+                  }),
+                )
+              : [],
         ));
   }
 

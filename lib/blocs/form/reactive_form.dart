@@ -143,6 +143,7 @@ abstract class ReactiveFormGroupWithObjectCubit<X> extends Cubit<ReactiveFormGro
   final BuildContext context;
   final String? identifier;
   final Map<String, AbstractControl<dynamic>> _controls = {};
+  bool initialized = false;
 
   ReactiveFormGroupWithObjectCubit(this.context, this.identifier) : super(ReactiveFormGroupWithObjectState<X>(null, null)) {
     init();
@@ -151,13 +152,24 @@ abstract class ReactiveFormGroupWithObjectCubit<X> extends Cubit<ReactiveFormGro
   init() {
     _controls.clear();
 
+    initialized = false;
+
     initFormControls(_controls);
     FormGroup form = initForm(_controls);
     initFormGroupSupplemental(form, _controls);
     emit(ReactiveFormGroupWithObjectState(form, state.object));
 
-    Future.delayed(const Duration(milliseconds: 50), () {
+    // Future.delayed(const Duration(milliseconds: 50), () {
+    //   loading();
+    //   Future.delayed(const Duration(milliseconds: 50), () {
+    //     initialized = true;
+    //   });
+    // });
+    Future.microtask(() {
       loading();
+      Future.delayed(const Duration(milliseconds: 50), () {
+        initialized = true;
+      });
     });
   }
 
