@@ -62,12 +62,9 @@ abstract class ReactiveFormGroupBloc<X extends ReactiveFormGroupState> extends B
       initFormControls(_controls);
       FormGroup form = initForm(_controls);
       initFormGroupSupplemental(form, _controls);
-      // emit(ReactiveFormState(form, state.object));
-      // add(FormUpdateReactiveFormEvent(form, true));
 
       Future.delayed(const Duration(milliseconds: 50), () {
         add(FormUpdateReactiveFormGroupEvent(form, true));
-        // loading();
       });
     } catch (ex) {
       Logger().e(runtimeType.toString(), 'loading', ex);
@@ -159,12 +156,6 @@ abstract class ReactiveFormGroupWithObjectCubit<X> extends Cubit<ReactiveFormGro
     initFormGroupSupplemental(form, _controls);
     emit(ReactiveFormGroupWithObjectState(form, state.object));
 
-    // Future.delayed(const Duration(milliseconds: 50), () {
-    //   loading();
-    //   Future.delayed(const Duration(milliseconds: 50), () {
-    //     initialized = true;
-    //   });
-    // });
     Future.microtask(() {
       loading();
       Future.delayed(const Duration(milliseconds: 50), () {
