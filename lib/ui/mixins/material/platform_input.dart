@@ -167,7 +167,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
 
   @override
   Widget constructInputText(BuildContext context, String name, String title, String? hint,
-      {bool readOnly = false, EdgeInsetsGeometry? padding, List<String>? masks, Widget? prefixIcon, Widget? suffixIcon, ReactiveFormFieldCallback? onTap}) {
+      {bool readOnly = false, EdgeInsetsGeometry? padding, List<String>? masks, Widget? prefixIcon, Widget? suffixIcon, ReactiveFormFieldCallback? onTap, Map<String, ValidationMessageFunction>? validationMessages}) {
     return Padding(
         padding: padding ?? const EdgeInsets.all(8.0),
         child: ReactiveTextField(
@@ -181,13 +181,20 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
           readOnly: readOnly,
           inputFormatters: masks != null && masks.isNotEmpty ? _iinputFormattersFromMasks(masks) : null,
           onTap: onTap,
+          validationMessages: validationMessages,
           // showErrors: (control) => control.invalid || control.dirty,
         ));
   }
 
   @override
   Widget constructInputTextArea(BuildContext context, String name, String title, String? hint,
-      {int maxLines = 5, int minLines = 1, int? maxLength = 500, MaxLengthEnforcement maxLengthEnforcement = MaxLengthEnforcement.enforced, bool readOnly = false, EdgeInsetsGeometry? padding}) {
+      {int maxLines = 5,
+      int minLines = 1,
+      int? maxLength = 500,
+      MaxLengthEnforcement maxLengthEnforcement = MaxLengthEnforcement.enforced,
+      bool readOnly = false,
+      EdgeInsetsGeometry? padding,
+      Map<String, ValidationMessageFunction>? validationMessages}) {
     return Padding(
         padding: padding ?? const EdgeInsets.all(8.0),
         child: ReactiveTextField(
@@ -202,6 +209,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
           maxLengthEnforcement: maxLengthEnforcement,
           maxLength: maxLength,
           readOnly: readOnly,
+          validationMessages: validationMessages,
           // showErrors: (control) => control.invalid || control.dirty,
         ));
   }
