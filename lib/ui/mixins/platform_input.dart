@@ -27,13 +27,44 @@ mixin InputPlatformMixin {
   Widget constructInputImage(BuildContext context, String name, String title, String? hint, {bool readOnly = false});
   Widget constructInputNumber(BuildContext context, String name, String title, String? hint, {bool signed = false, bool readOnly = false, EdgeInsetsGeometry? padding});
   Widget constructInputNumberDecimal(BuildContext context, String name, String title, String? hint, {bool signed = false, bool readOnly = false, EdgeInsetsGeometry? padding});
-  Widget constructInputText(BuildContext context, String name, String title, String? hint, {bool readOnly = false, EdgeInsetsGeometry? padding, List<String>? masks, Widget? prefixIcon, Widget? suffixIcon, ReactiveFormFieldCallback? onTap});
+  Widget constructInputText(BuildContext context, String name, String title, String? hint,
+      {bool readOnly = false, EdgeInsetsGeometry? padding, List<String>? masks, Widget? prefixIcon, Widget? suffixIcon, ReactiveFormFieldCallback? onTap, Map<String, ValidationMessageFunction>? validationMessages});
   Widget constructInputTextArea(BuildContext context, String name, String title, String? hint,
-      {int maxLines = 5, int minLines = 1, int? maxLength = 500, MaxLengthEnforcement maxLengthEnforcement = MaxLengthEnforcement.enforced, bool readOnly = false, EdgeInsetsGeometry? padding});
+      {int maxLines = 5,
+      int minLines = 1,
+      int? maxLength = 500,
+      MaxLengthEnforcement maxLengthEnforcement = MaxLengthEnforcement.enforced,
+      bool readOnly = false,
+      EdgeInsetsGeometry? padding,
+      Map<String, ValidationMessageFunction>? validationMessages});
 
   static ValidatorFunction numeric({bool decimal = false, bool signed = false}) => NumericValidator(decimal: decimal, signed: signed).validate;
   static ValidatorFunction max<T>(T max) => NumericMaxValidator<T>(max).validate;
   static ValidatorFunction min<T>(T max) => NumericMinValidator<T>(max).validate;
+
+  bool canSave(ReactiveFormGroupState state) {
+    return isDirty(state) && !haveErrors(state);
+  }
+
+  bool haveErrors(ReactiveFormGroupState state) {
+    return (state.formGroup != null ? state.formGroup!.hasErrors : false);
+  }
+
+  bool isDirty(ReactiveFormGroupState state) {
+    return (state.formGroup != null ? state.formGroup!.dirty : false);
+  }
+
+  bool isNew(ReactiveFormGroupState state) {
+    return state.isNew;
+  }
+
+  bool isNotDirty(ReactiveFormGroupState state) {
+    return !(state.formGroup != null ? state.formGroup!.dirty : false);
+  }
+
+  bool isNotNew(ReactiveFormGroupState state) {
+    return !state.isNew;
+  }
 }
 
 class NumericMaxValidator<T> extends Validator<dynamic> {
