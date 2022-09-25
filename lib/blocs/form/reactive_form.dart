@@ -103,7 +103,7 @@ abstract class ReactiveFormGroupBloc<X extends ReactiveFormGroupState> extends B
 
       initFormControls(_controls);
       FormGroup form = initForm(_controls);
-      initFormGroupSupplemental(form, _controls);
+      initFormGroupSupplemental(form);
 
       Future.delayed(const Duration(milliseconds: 50), () {
         add(FormLoadReactiveFormGroupEvent(form, true));
@@ -119,7 +119,7 @@ abstract class ReactiveFormGroupBloc<X extends ReactiveFormGroupState> extends B
 
   initFormControls(Map<String, AbstractControl<dynamic>> controls);
 
-  initFormGroupSupplemental(FormGroup form, Map<String, AbstractControl<dynamic>> controls) {}
+  initFormGroupSupplemental(FormGroup form) {}
 
   Future<bool> loading();
 
@@ -196,11 +196,11 @@ abstract class ReactiveFormGroupWithObjectCubit<X> extends Cubit<ReactiveFormGro
 
     initFormControls(_controls);
     FormGroup form = initForm(_controls);
-    initFormGroupSupplemental(form, _controls);
+    initFormGroupSupplemental(form);
     emit(ReactiveFormGroupWithObjectState(form, state.object, false));
 
-    Future.microtask(() {
-      loading();
+    Future.microtask(() async {
+      await loading();
       Future.delayed(const Duration(milliseconds: 50), () {
         initialized = true;
       });
@@ -213,7 +213,7 @@ abstract class ReactiveFormGroupWithObjectCubit<X> extends Cubit<ReactiveFormGro
 
   initFormControls(Map<String, AbstractControl<dynamic>> controls);
 
-  initFormGroupSupplemental(FormGroup form, Map<String, AbstractControl<dynamic>> controls) {}
+  initFormGroupSupplemental(FormGroup form) {}
 
   Future<void> loading();
 
@@ -293,7 +293,7 @@ abstract class ReactiveFormGroupCubit extends Cubit<ReactiveFormGroupState> {
 
     initFormControls(_controls);
     FormGroup form = initForm(_controls);
-    initFormGroupSupplemental(form, _controls);
+    initFormGroupSupplemental(form);
     emit(ReactiveFormGroupState(form, false));
 
     Future.delayed(const Duration(milliseconds: 50), () {
@@ -307,7 +307,7 @@ abstract class ReactiveFormGroupCubit extends Cubit<ReactiveFormGroupState> {
 
   initFormControls(Map<String, AbstractControl<dynamic>> controls);
 
-  initFormGroupSupplemental(FormGroup form, Map<String, AbstractControl<dynamic>> controls) {}
+  initFormGroupSupplemental(FormGroup form) {}
 
   Future<void> loading();
 
