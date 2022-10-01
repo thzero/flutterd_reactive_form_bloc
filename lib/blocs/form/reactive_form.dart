@@ -143,6 +143,7 @@ abstract class ReactiveFormGroupBloc<X extends ReactiveFormGroupState> extends B
         await saveUpdateState(state);
         state.formGroup!.markAsPristine();
         state.formGroup!.markAsUntouched();
+        emit(initStateWith(isNew: false));
       }
     } catch (ex) {
       Logger().e(runtimeType.toString(), 'save', ex);
@@ -238,6 +239,7 @@ abstract class ReactiveFormGroupWithObjectCubit<X> extends Cubit<ReactiveFormGro
     try {
       if (await saveUpdate(state.object)) {
         await saveUpdateState(state.object);
+        emit(ReactiveFormGroupWithObjectState(state.formGroup, state.object, false));
       }
     } catch (ex) {
       Logger().e(runtimeType.toString(), 'save', ex);
@@ -329,6 +331,7 @@ abstract class ReactiveFormGroupCubit extends Cubit<ReactiveFormGroupState> {
     try {
       if (await saveUpdate(state)) {
         await saveUpdateState(state);
+        emit(ReactiveFormGroupState(state.formGroup, false));
       }
     } catch (ex) {
       Logger().e(runtimeType.toString(), 'save', ex);
