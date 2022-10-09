@@ -14,7 +14,7 @@ import 'package:flutterd_reactive_form_bloc/blocs/form/reactive_form_state.dart'
 
 abstract class RepositoryReactiveFormBloc<X extends ReactiveFormGroupState, U extends Repository> extends ReactiveFormGroupBloc<X> {
   final U repository;
-  RepositoryReactiveFormBloc(BuildContext context, String? identifier, this.repository, X state) : super(context, identifier, state);
+  RepositoryReactiveFormBloc(BuildContext? context, String? identifier, this.repository, X state) : super(context, identifier, state);
 }
 
 abstract class ReactiveFormEvent extends Equatable {}
@@ -44,7 +44,8 @@ class FormSavedReactiveFormGroupEvent extends ReactiveFormEvent {
 }
 
 abstract class ReactiveFormGroupBloc<X extends ReactiveFormGroupState> extends Bloc<ReactiveFormEvent, X> {
-  final BuildContext context;
+  final BuildContext? context;
+  bool initialized = false;
   final String? identifier;
   final Map<String, AbstractControl<dynamic>> _controls = {};
 
@@ -64,6 +65,7 @@ abstract class ReactiveFormGroupBloc<X extends ReactiveFormGroupState> extends B
       if (event.initial) {
         bool isNew = await loading();
         add(FormLoadedReactiveFormGroupEvent(isNew));
+        initialized = true;
       }
     } on Exception {
       Logger().eM('ReactiveFormBloc', '_handleFormLoad', 'Error');
@@ -100,6 +102,8 @@ abstract class ReactiveFormGroupBloc<X extends ReactiveFormGroupState> extends B
   init() {
     try {
       _controls.clear();
+
+      initialized = false;
 
       initFormControls(_controls);
       FormGroup form = initForm(_controls);
@@ -338,14 +342,6 @@ abstract class ReactiveFormGroupCubit extends Cubit<ReactiveFormGroupState> {
     }
   }
 
-  submit() async {
-    try {
-      await submitUpdate(state);
-    } catch (ex) {
-      Logger().e(runtimeType.toString(), 'submit', ex);
-    }
-  }
-
   Future<bool> saveUpdate(ReactiveFormGroupState state) async {
     return true;
   }
@@ -353,6 +349,14 @@ abstract class ReactiveFormGroupCubit extends Cubit<ReactiveFormGroupState> {
   Future<void> saveUpdateState(ReactiveFormGroupState state) async {
     if (state.formGroup != null) {
       emit(ReactiveFormGroupState(state.formGroup!, false));
+    }
+  }
+
+  submit() async {
+    try {
+      await submitUpdate(state);
+    } catch (ex) {
+      Logger().e(runtimeType.toString(), 'submit', ex);
     }
   }
 

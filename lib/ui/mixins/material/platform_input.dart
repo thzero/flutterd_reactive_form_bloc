@@ -102,7 +102,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
     return state.formGroup != null
         ? ReactiveForm(
             formGroup: state.formGroup!,
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
               scrollable
                   ? Expanded(
                       child: SingleChildScrollView(child: child),
