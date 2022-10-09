@@ -102,7 +102,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
     return state.formGroup != null
         ? ReactiveForm(
             formGroup: state.formGroup!,
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
               scrollable
                   ? Expanded(
                       child: SingleChildScrollView(child: child),
@@ -134,7 +134,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
   }
 
   @override
-  Widget constructInputNumber(BuildContext context, String name, String title, String? hint, {bool signed = false, bool readOnly = false, EdgeInsetsGeometry? padding}) {
+  Widget constructInputNumber(BuildContext context, String name, String title, String? hint, {bool signed = false, bool readOnly = false, EdgeInsetsGeometry? padding, Map<String, ValidationMessageFunction>? validationMessages}) {
     return Padding(
         padding: padding ?? const EdgeInsets.all(8.0),
         child: ReactiveTextField(
@@ -145,12 +145,13 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
           formControlName: name,
           keyboardType: TextInputType.numberWithOptions(signed: signed, decimal: false),
           readOnly: readOnly,
+          validationMessages: validationMessages,
           // showErrors: (control) => control.invalid || control.dirty,
         ));
   }
 
   @override
-  Widget constructInputNumberDecimal(BuildContext context, String name, String title, String? hint, {bool signed = false, bool readOnly = false, EdgeInsetsGeometry? padding}) {
+  Widget constructInputNumberDecimal(BuildContext context, String name, String title, String? hint, {bool signed = false, bool readOnly = false, EdgeInsetsGeometry? padding, Map<String, ValidationMessageFunction>? validationMessages}) {
     return Padding(
         padding: padding ?? const EdgeInsets.all(8.0),
         child: ReactiveTextField(
@@ -161,6 +162,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
           formControlName: name,
           keyboardType: TextInputType.numberWithOptions(signed: signed, decimal: true),
           readOnly: readOnly,
+          validationMessages: validationMessages,
           // showErrors: (control) => control.invalid || control.dirty,
         ));
   }

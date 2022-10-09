@@ -25,8 +25,8 @@ mixin InputPlatformMixin {
   Widget constructInputDropdown(BuildContext context, String name, String text, String hint, Map<String, String> values, {bool readOnly = true, EdgeInsetsGeometry? padding, Widget? suffixIcon});
   Widget constructInputForm(BuildContext context, ReactiveFormGroupState state, Widget child, ReactiveFormConsumerActionsBuilder builder, {bool scrollable = true});
   Widget constructInputImage(BuildContext context, String name, String title, String? hint, {bool readOnly = false});
-  Widget constructInputNumber(BuildContext context, String name, String title, String? hint, {bool signed = false, bool readOnly = false, EdgeInsetsGeometry? padding});
-  Widget constructInputNumberDecimal(BuildContext context, String name, String title, String? hint, {bool signed = false, bool readOnly = false, EdgeInsetsGeometry? padding});
+  Widget constructInputNumber(BuildContext context, String name, String title, String? hint, {bool signed = false, bool readOnly = false, EdgeInsetsGeometry? padding, Map<String, ValidationMessageFunction>? validationMessages});
+  Widget constructInputNumberDecimal(BuildContext context, String name, String title, String? hint, {bool signed = false, bool readOnly = false, EdgeInsetsGeometry? padding, Map<String, ValidationMessageFunction>? validationMessages});
   Widget constructInputText(BuildContext context, String name, String title, String? hint,
       {bool readOnly = false, EdgeInsetsGeometry? padding, List<String>? masks, Widget? prefixIcon, Widget? suffixIcon, ReactiveFormFieldCallback? onTap, Map<String, ValidationMessageFunction>? validationMessages});
   Widget constructInputTextArea(BuildContext context, String name, String title, String? hint,
