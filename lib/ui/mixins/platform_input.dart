@@ -23,6 +23,7 @@ mixin InputPlatformMixin {
   });
   Widget constructInputDateText(BuildContext context, String name, String title, String? hint, {bool readOnly = true, EdgeInsetsGeometry? padding, ReactiveFormFieldCallback? onTap, DateFormat? dateTimeFormat});
   Widget constructInputDropdown(BuildContext context, String name, String text, String hint, Map<String, String> values, {bool readOnly = true, EdgeInsetsGeometry? padding, Widget? suffixIcon});
+  Widget constructInputDropdown2<X>(BuildContext context, String name, String text, String hint, Map<X, String> values, {bool readOnly = true, EdgeInsetsGeometry? padding, Widget? suffixIcon});
   Widget constructInputForm(BuildContext context, ReactiveFormGroupState state, Widget child, ReactiveFormConsumerActionsBuilder builder, {bool scrollable = true});
   Widget constructInputImage(BuildContext context, String name, String title, String? hint, {bool readOnly = false});
   Widget constructInputNumber(BuildContext context, String name, String title, String? hint, {bool signed = false, bool readOnly = false, EdgeInsetsGeometry? padding, Map<String, ValidationMessageFunction>? validationMessages});
