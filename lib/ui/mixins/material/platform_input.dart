@@ -44,13 +44,30 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
             labelText: text,
             suffixIcon: suffixIcon,
           ),
-          items: values != null
-              ? List<DropdownMenuItem<String>>.from(
-                  values.entries.map((entry) {
-                    return DropdownMenuItem<String>(value: entry.key, child: Text(entry.value));
-                  }),
-                )
-              : [],
+          items: List<DropdownMenuItem<String>>.from(
+            values.entries.map((entry) {
+              return DropdownMenuItem<String>(value: entry.key, child: Text(entry.value));
+            }),
+          ),
+        ));
+  }
+
+  @override
+  Widget constructInputDropdown2<X>(BuildContext context, String name, String text, String hint, Map<X, String> values, {bool readOnly = true, EdgeInsetsGeometry? padding, Widget? suffixIcon}) {
+    return Padding(
+        padding: padding ?? const EdgeInsets.all(8.0),
+        child: ReactiveDropdownField<X>(
+          formControlName: name,
+          decoration: InputDecoration(
+            hintText: hint,
+            labelText: text,
+            suffixIcon: suffixIcon,
+          ),
+          items: List<DropdownMenuItem<X>>.from(
+            values.entries.map((entry) {
+              return DropdownMenuItem<X>(value: entry.key, child: Text(entry.value));
+            }),
+          ),
         ));
   }
 
