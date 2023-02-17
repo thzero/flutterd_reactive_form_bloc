@@ -47,9 +47,10 @@ abstract class ReactiveFormGroupBloc<X extends ReactiveFormGroupState> extends B
   final BuildContext? context;
   bool initialized = false;
   final String? identifier;
+  final String? identifierSub;
   final Map<String, AbstractControl<dynamic>> _controls = {};
 
-  ReactiveFormGroupBloc(this.context, this.identifier, X state) : super(state) {
+  ReactiveFormGroupBloc(this.context, this.identifier, X state, {this.identifierSub}) : super(state) {
     on<FormLoadReactiveFormGroupEvent>(_handleFormLoad);
     on<FormLoadedReactiveFormGroupEvent>(_handleFormLoaded);
     on<FormSavedReactiveFormGroupEvent>(_handleFormSaved);
