@@ -190,6 +190,8 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
     return Padding(
         padding: padding ?? const EdgeInsets.all(8.0),
         child: ReactiveTextField(
+          keyboardType: TextInputType.text,
+          textCapitalization: TextCapitalization.sentences,
           decoration: InputDecoration(
             hintText: hint,
             labelText: title,
