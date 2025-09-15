@@ -136,6 +136,7 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
   Widget constructInputImage(BuildContext context, String name, String title, String? hint, {bool readOnly = false}) {
     return ReactiveImagePicker(
         formControlName: name,
+        modes: const [ImagePickerMode.cameraImage, ImagePickerMode.galleryImage],
         decoration: InputDecoration(
           contentPadding: EdgeInsets.zero,
           labelText: title,
@@ -186,10 +187,20 @@ mixin MaterialReactiveFormInputPlatformMixin on InputPlatformMixin, MaterialPlat
 
   @override
   Widget constructInputText(BuildContext context, String name, String title, String? hint,
-      {bool readOnly = false, EdgeInsetsGeometry? padding, List<String>? masks, Widget? prefixIcon, Widget? suffixIcon, ReactiveFormFieldCallback? onTap, Map<String, ValidationMessageFunction>? validationMessages}) {
+      {bool readOnly = false,
+      EdgeInsetsGeometry? padding,
+      List<String>? masks,
+      Widget? prefixIcon,
+      Widget? suffixIcon,
+      ReactiveFormFieldCallback? onTap,
+      Map<String, ValidationMessageFunction>? validationMessages,
+      TextInputType? keyboardType = TextInputType.text,
+      TextCapitalization? textCapitalization = TextCapitalization.sentences}) {
     return Padding(
         padding: padding ?? const EdgeInsets.all(8.0),
         child: ReactiveTextField(
+          keyboardType: TextInputType.text,
+          textCapitalization: TextCapitalization.sentences,
           decoration: InputDecoration(
             hintText: hint,
             labelText: title,

@@ -36,6 +36,13 @@ class FormLoadedReactiveFormGroupEvent extends ReactiveFormEvent {
   List<Object> get props => [];
 }
 
+class FormSaveReactiveFormGroupEvent extends ReactiveFormEvent {
+  FormSaveReactiveFormGroupEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
 class FormSavedReactiveFormGroupEvent extends ReactiveFormEvent {
   FormSavedReactiveFormGroupEvent();
 
@@ -47,11 +54,13 @@ abstract class ReactiveFormGroupBloc<X extends ReactiveFormGroupState> extends B
   final BuildContext? context;
   bool initialized = false;
   final String? identifier;
+  final String? identifierSub;
   final Map<String, AbstractControl<dynamic>> _controls = {};
 
-  ReactiveFormGroupBloc(this.context, this.identifier, X state) : super(state) {
+  ReactiveFormGroupBloc(this.context, this.identifier, X state, {this.identifierSub}) : super(state) {
     on<FormLoadReactiveFormGroupEvent>(_handleFormLoad);
     on<FormLoadedReactiveFormGroupEvent>(_handleFormLoaded);
+    on<FormSaveReactiveFormGroupEvent>(_handleFormSave);
     on<FormSavedReactiveFormGroupEvent>(_handleFormSaved);
     init();
   }
@@ -81,6 +90,17 @@ abstract class ReactiveFormGroupBloc<X extends ReactiveFormGroupState> extends B
       emit(initStateWith(isNew: event.isNew));
     } on Exception {
       Logger().eM('ReactiveFormBloc', '_handleFormLoaded', 'Error');
+    }
+    // finally {
+    //   m.release();
+    // }
+  }
+
+  FutureOr<void> _handleFormSave(FormSaveReactiveFormGroupEvent event, Emitter<X> emit) async {
+    try {
+      emit(initStateWith(isNew: false));
+    } on Exception {
+      Logger().eM('ReactiveFormBloc', '_handleFormSave', 'Error');
     }
     // finally {
     //   m.release();
@@ -147,7 +167,8 @@ abstract class ReactiveFormGroupBloc<X extends ReactiveFormGroupState> extends B
         await saveUpdateState(state);
         state.formGroup!.markAsPristine();
         state.formGroup!.markAsUntouched();
-        emit(initStateWith(isNew: false));
+        // emit(initStateWith(isNew: false));
+        add(FormSaveReactiveFormGroupEvent());
       }
     } catch (ex) {
       Logger().e(runtimeType.toString(), 'save', ex);
